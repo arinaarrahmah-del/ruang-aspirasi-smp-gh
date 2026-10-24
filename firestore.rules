@@ -1,0 +1,30 @@
+rules_version = '2';
+service cloud.firestore {
+ match /databases/{database}/documents {
+  function signedIn(){return request.auth != null;}
+  function isAdmin(){return signedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid)) && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.aktif == true;}
+  match /activities/{id} {
+   allow read: if resource.data.aktif == true || isAdmin();
+   allow create,update,delete: if isAdmin();
+  }
+  match /settings/{id} {
+   allow read: if id == "public" || isAdmin();
+   allow create,update,delete: if isAdmin();
+  }
+  match /responses/{id} {
+   allow create: if request.resource.data.keys().hasAll(['activityId','activityName','semester','tahunAjaran','kategori','penilaian','tujuan','manfaat','alasanManfaat','halPositif','saran'])
+    && request.resource.data.kategori in ['Guru','Wali Murid']
+    && request.resource.data.penilaian in ['Sangat Baik','Baik','Cukup','Buruk','Sangat Buruk']
+    && request.resource.data.tujuan in ['Ya','Tidak'] && request.resource.data.manfaat in ['Ya','Tidak']
+    && request.resource.data.alasanManfaat is string && request.resource.data.alasanManfaat.size() <= 2000
+    && request.resource.data.halPositif is string && request.resource.data.halPositif.size() <= 2000
+    && request.resource.data.saran is string && request.resource.data.saran.size() <= 3000
+    && ((request.resource.data.kategori == 'Guru' && request.resource.data.namaGuru is string && request.resource.data.namaGuru.size() > 0)
+      || (request.resource.data.kategori == 'Wali Murid' && request.resource.data.kelas in ['VII','VIII','IX'] && request.resource.data.namaSiswa is string && request.resource.data.namaSiswa.size() > 0 && request.resource.data.namaWali is string && request.resource.data.namaWali.size() > 0))
+    && exists(/databases/$(database)/documents/activities/$(request.resource.data.activityId))
+    && get(/databases/$(database)/documents/activities/$(request.resource.data.activityId)).data.aktif == true;
+   allow read,update,delete: if isAdmin();
+  }
+  match /admins/{uid} {allow read: if signedIn() && request.auth.uid == uid; allow write: if false;}
+ }
+}
