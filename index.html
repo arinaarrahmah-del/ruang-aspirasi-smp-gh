@@ -10,7 +10,14 @@
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import{getAuth,signInWithEmailAndPassword,onAuthStateChanged,signOut}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 import{getFirestore,collection,addDoc,getDocs,getDoc,doc,setDoc,updateDoc,query,where,serverTimestamp,writeBatch}from"https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-const firebaseConfig={apiKey:"ISI_API_KEY",authDomain:"ISI_PROJECT_ID.firebaseapp.com",projectId:"ISI_PROJECT_ID",storageBucket:"ISI_PROJECT_ID.appspot.com",messagingSenderId:"ISI_MESSAGING_SENDER_ID",appId:"ISI_APP_ID"};
+const firebaseConfig = {
+  apiKey: "AIzaSyA4U95EID1N8flYSwropsdUcSVIHzBkcgM",
+  authDomain: "ruang-aspirasi-smp-gh.firebaseapp.com",
+  projectId: "ruang-aspirasi-smp-gh",
+  storageBucket: "ruang-aspirasi-smp-gh.firebasestorage.app",
+  messagingSenderId: "486856900238",
+  appId: "1:486856900238:web:b12de2e5a4995827a813df"
+};
 const ready=!Object.values(firebaseConfig).some(v=>v.startsWith("ISI_"));let db,auth,user=null,period={semester:"Ganjil",tahunAjaran:"2026-2027"},activities=[];
 if(ready){const app=initializeApp(firebaseConfig);db=getFirestore(app);auth=getAuth(app);onAuthStateChanged(auth,u=>user=u)}
 const defaults=[["mpls","MPLS RAMAH 2026","📅"],["bidari","BiDaRi (Bina Dasar Mandiri)","🤝"],["sabar","SaBar (Sarapan Bareng)","🍽️"],["nasional","Peringatan Hari Besar Nasional","🚩"],["pramuka","Pramuka (Ekstrakurikuler Wajib)","⚜️"],["jumat","Jum'at Berbagi","💛"],["cooking","Cooking Class (Es Buah)","🍹"],["pemilu","Pemilu Raya","🗳️"],["persari","Persari","🏕️"],["pasar-modern","Program Belanja (Pasar Modern)","🛒"],["vokasi","Vokasi","🧩"],["literasi","Literasi Mendongeng","📚"],["bencana","Mitigasi Bencana","🧯"],["pasar-tradisional","Program Belanja (Pasar Tradisional)","🥬"]].map(([id,nama,ikon],i)=>({id,nama,ikon,aktif:true,urutan:i}));
